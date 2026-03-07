@@ -2,7 +2,8 @@ package config
 
 import "testing"
 
-func Test_Command_Lexical_Positive(t *testing.T) {
+// Testing some valid examples.
+func Test_Command_Lexical_Valid(t *testing.T) {
 	validValues := [...]Command{Command{Execute: "do somthing"},
 		Command{Execute: "exec/bin/program with params"},
 	}
@@ -13,7 +14,8 @@ func Test_Command_Lexical_Positive(t *testing.T) {
 	}
 }
 
-func Test_Command_Lexical_Negative(t *testing.T) {
+// Testing some invalid examples
+func Test_Command_Lexical_Invalid(t *testing.T) {
 	validValues := [...]Command{Command{Execute: ""},
 		Command{Execute: "   "},
 		Command{Execute: "\t\r\n"},

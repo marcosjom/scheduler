@@ -20,7 +20,7 @@ type Command struct {
 
 // Lexical validation.
 func (t *Command) HasError() error {
-	// Range
+	// Execute
 	if strings.TrimSpace(t.Execute) == "" {
 		return errors.New("Command.Execute cannot be empty.")
 	}
