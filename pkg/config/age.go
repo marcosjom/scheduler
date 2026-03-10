@@ -7,7 +7,7 @@ import (
 )
 
 // Age represents an ammount of time.
-// years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
+// years+"y" | months+"M" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
 type Age string
 
 // Lexical validation.
@@ -19,13 +19,13 @@ func (t Age) HasError() error {
 		if p == "" {
 			continue
 		}
-		//eval years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
+		// Eval years+"y" | months+"M" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
 		if len(p) == 1 {
 			return errors.New("Part requires value and suffix: '" + p + "'.")
 		}
 		sfx := p[len(p)-1]
 		switch sfx {
-		case 'y', 'M', 'w', 'd', 'h', 'm', 's':
+		case 'y', 'M', 'd', 'h', 'm', 's':
 			num, err := strconv.Atoi(p[:len(p)-1])
 			if err != nil {
 				return errors.New("Part requires a numeric value: '" + p + "'.")

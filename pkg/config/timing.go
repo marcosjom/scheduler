@@ -13,20 +13,16 @@ type Timing struct {
 		Max Instant //month-name, weekday-name, numeric-day, hour+"h", minute+"m", second+"s"
 	}
 
-	// Defines the minimun and maximun wait time since last
-	// execution of the task associated to the trigger.
+	// Defines the minimun age between attemps and executions.
 	Age struct {
+		// Minimun time between evaluations of the trigger.
+		Tick Age //years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
+		// Minimun time between executions.
 		Min Age //years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
+		// If defined, an execution is attempted even outside of the allowed range of instans.
+		// If not defined, a succesful execution is allowed to be skipped if wa not possible inside the allowed's range.
 		Max Age //years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
 	}
-
-	// If true, the task is not allowed to run out of its specified Range, event if last execution is over Ange.Max old.
-	// If false, the task ignores the specified Range in attempt to avoid executions older than Ange.Max.
-	IsSkipAllowed bool
-
-	// If true, multiple tasks can run simultaniously; usually when the task takes longer than its Range.
-	// If false, only one instance of this task can be active.
-	IsMultipleInstancesAllowed bool
 }
 
 // Lexical validation.

@@ -1,15 +1,27 @@
 package task
 
-import "time"
+import (
+	"time"
+)
 
-//Represents the history of a task.
+// Represents the execution history of a task.
 type History struct {
-	//Record's version (when a saving value changes, this value should be increased)
+	// Record's version (when a saving value changes, this value should be increased)
 	VersionId uint32
-	//Last Run
+	// Last Tick
+	LastTick struct {
+		Time time.Time
+	}
+	// Last Run
 	LastRun struct {
-		Time   time.Time
-		Result Result
+		// Configuration that produced the last execution result.
+		ConfigCrc32 uint32
+		Time        time.Time
+		Result      Result
+	}
+	// Last Success
+	LastSuccess struct {
+		Time time.Time
 	}
 	// Last Save (detects unsaved changes)
 	LastSave struct {

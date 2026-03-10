@@ -3,11 +3,11 @@ package task
 type Result int
 
 const (
-	//Task execution completed succesfuly.
+	// Task execution completed succesfuly.
 	Success Result = iota
-	//Task completion failed ot execute, but should retry later.
+	// Task completion failed ot execute, but should retry later.
 	ErrorRecoverable
-	//Task completion failed ot execute, and should not retry until configuration changes.
+	// Task completion failed ot execute, and should not retry until configuration changes.
 	ErrorUnrecoverable
 )
 

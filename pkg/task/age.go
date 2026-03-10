@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/marcosjom/sys-backups-automation/pkg/common"
 	"github.com/marcosjom/sys-backups-automation/pkg/config"
 )
 
@@ -16,7 +17,6 @@ const (
 	Minutes
 	Hours
 	Days
-	Weeks
 	Months
 	Years
 )
@@ -26,7 +26,6 @@ type Age struct {
 	Minutes int
 	Hours   int
 	Days    int
-	Weeks   int
 	Months  int
 	Years   int
 }
@@ -72,6 +71,15 @@ func (a *Age) String() string {
 	return r
 }
 
+func (a *Age) AsSecs() int64 {
+	return int64(a.Seconds) +
+		int64(a.Minutes*60) +
+		int64(a.Hours*60*60) +
+		int64(a.Days*60*60*24) +
+		int64(a.Months*60*60*24*31) +
+		int64(a.Years*60*60*24*31*12)
+}
+
 func (a *Age) SetFromConfig(age config.Age) error {
 	tmp := Age{}
 	partsCount := 0
@@ -81,13 +89,13 @@ func (a *Age) SetFromConfig(age config.Age) error {
 		if p == "" {
 			continue
 		}
-		//eval years+"y" | months+"M" | weeks+"w" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
+		//eval years+"y" | months+"M" | days+"d" | hours+"h" | minutes+"m" | seconds+"s"
 		if len(p) == 1 {
 			return errors.New("Part requires value and suffix: '" + p + "'.")
 		}
 		sfx := p[len(p)-1]
 		switch sfx {
-		case 'y', 'M', 'w', 'd', 'h', 'm', 's':
+		case 'y', 'M', 'd', 'h', 'm', 's':
 			num, err := strconv.Atoi(p[:len(p)-1])
 			if err != nil {
 				return errors.New("Part requires a numeric value: '" + p + "'.")
@@ -105,11 +113,6 @@ func (a *Age) SetFromConfig(age config.Age) error {
 					return errors.New("Part '" + string(sfx) + "' appears more than once.")
 				}
 				tmp.Months = num
-			case 'w':
-				if tmp.Weeks != 0 {
-					return errors.New("Part '" + string(sfx) + "' appears more than once.")
-				}
-				tmp.Weeks = num
 			case 'd':
 				if tmp.Days != 0 {
 					return errors.New("Part '" + string(sfx) + "' appears more than once.")
@@ -147,17 +150,6 @@ func (a *Age) SetFromConfig(age config.Age) error {
 	return nil
 }
 
-func LastDayInMonth(year int, month int) int {
-	if month != 2 {
-		return 31 - (month-1)%7%2
-	}
-	//feb
-	if year&3 == 0 && (year%25 != 0 || year&15 == 0) {
-		return 29
-	}
-	return 28
-}
-
 func (a *Age) SetFromTo(startP time.Time, endP time.Time) {
 	tmp := Age{}
 	start := startP
@@ -182,7 +174,7 @@ func (a *Age) SetFromTo(startP time.Time, endP time.Time) {
 			(endDay == startDay && endHour == startHour && endMin < startMin) ||
 			(endDay == startDay && endHour == startHour && endMin == startMin && endSec < startSec) {
 			monthsCount -= 1
-			lastDayInMonth := LastDayInMonth(endYear, startMonth+1) //start-month at end-year
+			lastDayInMonth := common.LastDayInMonth(endYear, startMonth+1) //start-month at end-year
 			endDay = lastDayInMonth + endDay
 		}
 		// Set years and months
@@ -196,7 +188,7 @@ func (a *Age) SetFromTo(startP time.Time, endP time.Time) {
 		// Force sDay <= eDay2
 		eDay2 := endDay
 		if eDay2 < startDay {
-			lastDayInMonth := LastDayInMonth(endYear, startMonth+1) //start-month at end-year
+			lastDayInMonth := common.LastDayInMonth(endYear, startMonth+1) //start-month at end-year
 			eDay2 = lastDayInMonth + eDay2
 		}
 		// Calculate possible-completed hours
