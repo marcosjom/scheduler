@@ -20,7 +20,7 @@ type Task struct {
 }
 
 // Lexical validation.
-func (t Task) HasError() error {
+func (t *Task) HasError() error {
 	//Timing
 	if err := t.Timing.HasError(); err != nil {
 		return err
@@ -36,7 +36,7 @@ func (t Task) HasError() error {
 
 // Task's config CRC32; to detect changes on the configuration.
 
-func (t Task) Crc32() uint32 {
+func (t *Task) Crc32() uint32 {
 	b, err := json.Marshal(t)
 	if err != nil {
 		return 0

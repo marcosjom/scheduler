@@ -3,8 +3,10 @@ package task
 type Result int
 
 const (
+	// unexecuted task
+	Pending Result = iota
 	// Task execution completed succesfuly.
-	Success Result = iota
+	Success
 	// Task completion failed ot execute, but should retry later.
 	ErrorRecoverable
 	// Task completion failed ot execute, and should not retry until configuration changes.

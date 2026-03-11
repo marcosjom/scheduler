@@ -12,7 +12,6 @@ func Test_Trigger_IsTickOldEnough(t *testing.T) {
 	start := time.Now()
 	hoursMaxToEval := 128
 	// Prepare trigger
-	history := History{}
 	config := config.Task{}
 	{
 		config.Timing.Age.Tick = "1d"
@@ -22,7 +21,7 @@ func Test_Trigger_IsTickOldEnough(t *testing.T) {
 		config.Timing.Range.Min = "January"
 		config.Timing.Range.Max = "January"
 	}
-	trigger := Trigger{History: &history}
+	trigger := Trigger{}
 	if err := trigger.SetConfig(&config); err != nil {
 		t.Errorf("SetConfig failed: %s.", err.Error())
 		return
@@ -32,7 +31,7 @@ func Test_Trigger_IsTickOldEnough(t *testing.T) {
 	for iHour := 0; iHour <= hoursMaxToEval; iHour++ {
 		end := start.Add(time.Hour * time.Duration(iHour))
 		if trigger.IsTickOldEnough(end) {
-			history.LastTick.Time = end
+			trigger.History.LastTick.Time = end
 			execsCount++
 		}
 	}
@@ -50,7 +49,6 @@ func Test_Trigger_ShouldRunTask_Daily(t *testing.T) {
 	daysMaxToEval := (monthsToEval * 31)
 	hoursMaxToEval := (daysMaxToEval * 24)
 	// Prepare trigger
-	history := History{}
 	config := config.Task{}
 	{
 		config.Timing.Age.Tick = "6h"
@@ -60,7 +58,7 @@ func Test_Trigger_ShouldRunTask_Daily(t *testing.T) {
 		config.Timing.Range.Min = "1" //1 of each month
 		config.Timing.Range.Max = "3" //3 of each month
 	}
-	trigger := Trigger{History: &history}
+	trigger := Trigger{}
 	if err := trigger.SetConfig(&config); err != nil {
 		t.Errorf("SetConfig failed: %s.", err.Error())
 		return
@@ -72,12 +70,12 @@ func Test_Trigger_ShouldRunTask_Daily(t *testing.T) {
 		end := start.Add(time.Hour * time.Duration(iHour))
 		//Tick
 		if trigger.IsTickOldEnough(end) {
-			history.LastTick.Time = end
+			trigger.History.LastTick.Time = end
 			ticksCount++
 			//Run
 			if trigger.ShouldRunTask(end) {
 				//fmt.Printf("Executing: %s.\n", end.String()[:16])
-				history.LastSuccess.Time = end
+				trigger.History.LastSuccess.Time = end
 				execsCount++
 			}
 		}

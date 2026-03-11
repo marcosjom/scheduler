@@ -1,0 +1,23 @@
+{
+	"version": 0
+	, "timing": {
+        "range": {
+		    "min": "January"
+		    , "max": "January"
+            , "desc": "every year, during january"
+        }
+        , "age": {
+		    "tick": "1d"
+		    , "min": "3M"
+            , "max": "6M"
+            , "desc": "evaluate every day; do not execute if last successful execution is 3-months or younger; ignore allowed-range limitation if last successful execution is 6 months or older"
+	    }
+	}
+	, "commands": [
+        {
+            "execute": "echo 'Hi in January!'"
+            , "catch": "echo 'Error!'"
+            , "deferred": "echo 'Success!'"
+        }
+    ]
+}

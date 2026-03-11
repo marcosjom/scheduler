@@ -23,10 +23,6 @@ type History struct {
 	LastSuccess struct {
 		Time time.Time
 	}
-	// Last Save (detects unsaved changes)
-	LastSave struct {
-		VersonId uint32
-	}
 }
 
 func (h *History) SetLastRunResult(result Result) {
@@ -34,12 +30,4 @@ func (h *History) SetLastRunResult(result Result) {
 	h.LastRun.Result = result
 	//
 	h.VersionId++
-}
-
-func (h *History) HasUnsavedChanges() bool {
-	return h.LastSave.VersonId != h.VersionId
-}
-
-func (h *History) SyncAsSaved() {
-	h.LastSave.VersonId = h.VersionId
 }

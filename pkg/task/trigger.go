@@ -8,7 +8,7 @@ import (
 
 // Determines if a task should be executed.
 type Trigger struct {
-	History *History
+	History History
 	// Cache
 	cache struct {
 		config struct {
@@ -217,6 +217,43 @@ func (t *Trigger) ShouldRunTask(time time.Time) bool {
 	return false
 }
 
-func (t *Trigger) Execute(time time.Time) error {
+// Flags the Trigger as ticked/evaluated
+
+func (t *Trigger) Ticked() {
+	t.TickedAt(time.Now())
+}
+
+func (t *Trigger) TickedAt(time time.Time) {
+	t.History.LastTick.Time = time
+	// Update sequence of changes
+	t.History.VersionId++
+}
+
+// Flag the Execution as started
+
+func (t *Trigger) ExecutionStarted() error {
+	return t.ExecutionStartedAt(time.Now())
+}
+
+func (t *Trigger) ExecutionStartedAt(time time.Time) error {
+	t.History.LastRun.ConfigCrc32 = t.cache.config.crc32
+	t.History.LastRun.Time = time
+	t.History.LastRun.Result = Pending
+	// Update sequence of changes
+	t.History.VersionId++
+	return nil
+}
+
+func (t *Trigger) ExecutionEnded(result Result) error {
+	return t.ExecutionEndedAt(time.Now(), result)
+}
+
+func (t *Trigger) ExecutionEndedAt(time time.Time, result Result) error {
+	t.History.LastRun.Result = result
+	if result == Success {
+		t.History.LastSuccess.Time = time
+	}
+	// Update sequence of changes
+	t.History.VersionId++
 	return nil
 }

@@ -1,0 +1,23 @@
+{
+	"version": 0
+	, "timing": {
+        "range": {
+		    "min": "5s"
+		    , "max": "10s"
+            , "desc": "every minute, between the 5th and 10th second"
+        }
+        , "age": {
+		    "tick": "5s"
+		    , "min": "30s"
+            , "max": "1h"
+            , "desc": "evaluate every 5 seconds; do not execute if last successful execution is 30s or younger; ignore allowed-range limitation if last successful execution is 1h or older"
+	    }
+	}
+	, "commands": [
+        {
+            "execute": "echo 'Hi this minute!'"
+            , "catch": "echo 'Error!'"
+            , "deferred": "echo 'Success!'"
+        }
+    ]
+}
