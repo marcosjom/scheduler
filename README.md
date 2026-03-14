@@ -12,8 +12,8 @@ Created by [Marcos Ortega](https://mortegam.com/) for automatic database backups
 - Define min/max age of last succesfull execution for each task.
 - Define range of allowed execution for each task.
 - Define commands, and optionally each command:
-    - can have a 'catch' command to be executed if the main command fails.
-    - can have a 'deferred' command to be executed if the main command succeeds.
+    - can have a 'catch' command to be executed (immediately) if the main command fails.
+    - can have a 'deferred' command to be executed (in reverser order) if the main command succeeds.
 
 # Compile it (Windows, Linux, Mac)
 
