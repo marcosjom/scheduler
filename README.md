@@ -115,6 +115,7 @@ myEveryYearTask.json
 	}
 	, "commands": [ ...]
 }
+```
 
 ... which:
 
