@@ -9,11 +9,11 @@ Created by [Marcos Ortega](https://mortegam.com/) for automatic database backups
 - Coded in Go.
 - Schedule periodic taks.
 - Define how often each task will be eavluated.
-- Define min/max age of last succesfull execution of each task.
-- Define range of allowed execution of each task.
-- Define commands:
-    - optionally each command can have a 'catch' command to be executed if the main command fails.
-    - optionally each command can have a 'deferred' command to be executed if the main command succeeds.
+- Define min/max age of last succesfull execution for each task.
+- Define range of allowed execution for each task.
+- Define commands, and optionally each command:
+    - can have a 'catch' command to be executed if the main command fails.
+    - can have a 'deferred' command to be executed if the main command succeeds.
 
 # Compile it (Windows, Linux, Mac)
 
@@ -45,7 +45,7 @@ myConfig.json
 	"client": {
 		"configs": {
 			"path": "/etc/scheduler/tasks"
-			, "secsBetweenSync": 60
+			, "secsBetweenSync": 300
 		}
 		, "state": {
 			"path": "/etc/scheduler/state.json"
@@ -58,9 +58,9 @@ myConfig.json
 This configuration file:
 
 - defines '/etc/scheduler/tasks' as the folder that contains the tasks (.json) to be executed.
-- each 60 seconds the '/etc/scheduler/tasks' folder will be read to detect added/updated/removed tasks.
+- each 5 minutes the 'tasks' folder will be scanned to detect added/updated/removed tasks.
 - the persistent-state will be loaded/saved into '/etc/scheduler/state.json'
-- the persistente-state will be saved 60 seconds after it changes.
+- the persistent-state will be saved 60 seconds after the oldest change.
 
 # Task
 
@@ -90,24 +90,25 @@ myEveryMinuteTask.json
 }
 ```
 
-Which:
+... which:
 
  - executes between the 5th and 10th second (inclusive) of each minute.
  - is evaluated every 5 seconds (tick).
- - new executions must be 30s or older from last succesfull execution.
- - execution is forced if last succesfull execution is 1h or older.
+ - new executions must be 30 seconds or older from last succesfull execution.
+ - execution is forced (allowed-range is ignored) if last succesfull execution is 1 hour or older.
 
 myEveryYearTask.json
 
+```
 {
 	"version": 0
 	, "timing": {
         "range": {
-		    "min": "January 0h"
-		    , "max": "January 3h"
+		      "min": "January 0h"
+		      , "max": "January 3h"
         }
         , "age": {
-		      "tick": "1d"
+		      "tick": "1h"
 		      , "min": "3M"
           , "max": "6M"
 	    }
@@ -115,12 +116,12 @@ myEveryYearTask.json
 	, "commands": [ ...]
 }
 
-Which:
+... which:
 
- - executes once-a-year between the midnight and 3rd hour (inclusive) at january.
- - is evaluated every day (tick).
+ - executes once-a-year between the midnight and 3rd hour (inclusive) of each day of january.
+ - is evaluated every hour (tick).
  - new executions must be 3 month or older from last succesfull execution.
- - execution is forced if last succesfull execution is 6 months or older.
+ - execution is forced (allowed-range is ignored) if last succesfull execution is 6 months or older.
 
 # Contact
 
