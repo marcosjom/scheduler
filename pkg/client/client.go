@@ -2,18 +2,18 @@ package client
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/task"
+	"github.com/marcosjom/sys-backups-automation/pkg/config"
 )
 
 type Client struct {
 
 	// Configuration
-	config Config
+	config config.Client
 
 	// Tasks
 	tasks struct {
@@ -27,7 +27,6 @@ type Client struct {
 
 	// States
 	state struct {
-		filepath        string
 		payload         State
 		hasChanged      bool
 		secsWithoutSave int
@@ -42,27 +41,33 @@ func New() *Client {
 	return &r
 }
 
-func (c *Client) Prepare(configFilepath string, stateFilepath string) error {
+func (c *Client) Prepare(config config.Client) error {
 	// config
-	config := Config{}
-	if err := config.Load(configFilepath); err != nil {
-		return err
-	}
 	if err := config.HasError(); err != nil {
 		return err
 	}
 	// persistent-state
-	state := State{}
-	if err := state.Load(stateFilepath); err != nil {
+	state := NewState()
+	stateExists, stateErr := state.FileExists(config.State.Path)
+	if stateErr != nil {
+		return stateErr
+	}
+	// Check for readable-state
+	if stateExists {
+		if err := state.Load(config.State.Path); err != nil {
+			return err
+		}
+	}
+	// Load tasks
+	if err := c.reloadTasksWithState(config.Configs.Path, &state); err != nil {
 		return err
 	}
-	// load tasks
-	if err := c.reloadTasksWithState(config.Configs.Path, &state); err != nil {
+	// Check for writable-state
+	if err := state.Save(config.State.Path); err != nil {
 		return err
 	}
 	// set
 	c.config = config
-	c.state.filepath = stateFilepath
 	c.state.payload = state
 	//
 	return nil
@@ -112,9 +117,8 @@ func (c *Client) reloadTasksWithState(folderPathP string, state *State) error {
 			}
 			// Load file
 			if err := task.LoadConfig(filepath); err != nil {
-				fmt.Printf("Load failed for: '%s': '%s'.\n", filepath, err.Error())
+				log.Printf("Load failed for: '%s': '%s'.\n", filepath, err.Error())
 			} else {
-				fmt.Printf("Loaded: '%s'.\n", filepath)
 				task.IsOrphaned = false
 				savedState, fndSavedState := state.Tasks[filepath]
 				// Add to array
@@ -128,13 +132,9 @@ func (c *Client) reloadTasksWithState(folderPathP string, state *State) error {
 						task.trigger.History.VersionId++
 					}
 				}
-				// Determine if state changed
-				if !fndSavedState || savedState.VersionId != task.trigger.History.VersionId {
-					c.state.hasChanged = true
-				}
 			}
 		} else {
-			fmt.Printf("Ignoring: '%s'.\n", fileName)
+			log.Printf("Ignoring: '%s'.\n", fileName)
 		}
 	}
 	// Remove all orphaned tasks
@@ -144,7 +144,7 @@ func (c *Client) reloadTasksWithState(folderPathP string, state *State) error {
 		}
 	}
 	//
-	fmt.Printf("%d -> %d tasks remain after syncing.\n", tasksCountBefore, len(c.tasks.arr))
+	log.Printf("%d -> %d tasks remain after syncing.\n", tasksCountBefore, len(c.tasks.arr))
 	//
 	return nil
 }
@@ -157,9 +157,10 @@ func (c *Client) SaveState() error {
 		c.state.payload.Tasks[k] = t.trigger.History
 	}
 	// dump to file
-	if err := c.state.payload.Save(c.state.filepath); err != nil {
+	if err := c.state.payload.Save(c.config.State.Path); err != nil {
 		return err
 	}
+	log.Printf("Client-state saved.\n")
 	//
 	return nil
 }
@@ -186,8 +187,10 @@ func (c *Client) TickOneSecond() error {
 	}
 	// Evaluate tasks
 	for _, t := range c.tasks.arr {
-		result := t.Tick()
-		if result != task.Pending {
+		t.Tick()
+		// Detect unsaved state changes
+		if t.ExecSeqSaved != t.ExecSeq {
+			t.ExecSeqSaved = t.ExecSeq
 			c.state.hasChanged = true
 		}
 	}

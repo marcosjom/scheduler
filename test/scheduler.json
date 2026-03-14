@@ -1,0 +1,12 @@
+{
+	"client": {
+		"configs": {
+			"path": "test/tasks"
+			, "secsBetweenSync": 5
+		}
+		, "state": {
+			"path": "scheduler.state.json"
+			, "secsBetweenSave": 10
+		}
+	}
+}

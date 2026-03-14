@@ -74,7 +74,7 @@ func Test_Trigger_ShouldRunTask_Daily(t *testing.T) {
 			ticksCount++
 			//Run
 			if trigger.ShouldRunTask(end) {
-				//fmt.Printf("Executing: %s.\n", end.String()[:16])
+				//log.Printf("Executing: %s.\n", end.String()[:16])
 				trigger.History.LastSuccess.Time = end
 				execsCount++
 			}

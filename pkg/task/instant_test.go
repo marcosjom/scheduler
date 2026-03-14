@@ -46,7 +46,7 @@ func Test_Instant_Yearly(t *testing.T) {
 			//isTrue = "yes"
 			ticksWereTrue++
 		}
-		//fmt.Printf("curTime: %s = %s\n", curTime.String(), isTrue)
+		//log.Printf("curTime: %s = %s\n", curTime.String(), isTrue)
 		//move to next month
 		latDayInMonth := common.LastDayInMonth(year, int(curTime.Month()))
 		curTime = curTime.Add(time.Hour * time.Duration(24*latDayInMonth))
@@ -76,7 +76,7 @@ func Test_Instant_Monthly(t *testing.T) {
 			//isTrue = "yes"
 			ticksWereTrue++
 		}
-		//fmt.Printf("curTime: %s = %s\n", curTime.String(), isTrue)
+		//log.Printf("curTime: %s = %s\n", curTime.String(), isTrue)
 		//move to next day
 		curTime = curTime.Add(time.Hour * time.Duration(24))
 		if curMonth != curTime.Month() {
