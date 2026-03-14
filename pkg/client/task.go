@@ -78,10 +78,7 @@ func cmdFromString(s string) (*exec.Cmd, error) {
 		cmd.Args = append([]string{"/C"}, cmdParts...)
 		return cmd, nil
 	}
-	cmd := exec.Command(cmdParts[0])
-	if len(cmdParts) > 1 {
-		cmd.Args = cmdParts[1:]
-	}
+	cmd := exec.Command("bash", "-c", s)
 	return cmd, nil
 }
 
