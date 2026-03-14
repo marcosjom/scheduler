@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
-	"github.com/marcosjom/sys-backups-automation/pkg/task"
+	"github.com/marcosjom/scheduler/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/task"
 )
 
 type Task struct {

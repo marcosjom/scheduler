@@ -1,3 +1,3 @@
-module github.com/marcosjom/sys-backups-automation
+module github.com/marcosjom/scheduler
 
 go 1.25.6
