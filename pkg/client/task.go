@@ -1,6 +1,7 @@
 package client
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -116,7 +117,17 @@ func (t *Task) Tick() task.Result {
 			r = task.ErrorUnrecoverable
 			break
 		}
+		outb := bytes.Buffer{}
+		errb := bytes.Buffer{}
+		cmd.Stdout = &outb
+		cmd.Stderr = &errb
 		if err := cmd.Run(); err != nil {
+			if outStr := outb.String(); len(outStr) > 0 {
+				log.Printf("Command stdout: %s.\n", outStr)
+			}
+			if errStr := errb.String(); len(errStr) > 0 {
+				log.Printf("Command stderr: %s.\n", errStr)
+			}
 			log.Printf("Command execution failed: %s.\n", err.Error())
 			catchStr := strings.TrimSpace(cmdDef.Catch)
 			if catchStr != "" {
@@ -127,7 +138,17 @@ func (t *Task) Tick() task.Result {
 					r = task.ErrorUnrecoverable
 					break
 				}
+				outb2 := bytes.Buffer{}
+				errb2 := bytes.Buffer{}
+				cmd2.Stdout = &outb2
+				cmd2.Stderr = &errb2
 				if err := cmd2.Run(); err != nil {
+					if outStr2 := outb2.String(); len(outStr2) > 0 {
+						log.Printf("Catch stdout: %s.\n", outStr2)
+					}
+					if errStr2 := errb2.String(); len(errStr2) > 0 {
+						log.Printf("Catch stderr: %s.\n", errStr2)
+					}
 					log.Printf("Catch execution failed: %s.\n", err.Error())
 				}
 			}
@@ -150,7 +171,17 @@ func (t *Task) Tick() task.Result {
 			r = task.ErrorUnrecoverable
 			break
 		}
+		outb3 := bytes.Buffer{}
+		errb3 := bytes.Buffer{}
+		cmd3.Stdout = &outb3
+		cmd3.Stderr = &errb3
 		if err := cmd3.Run(); err != nil {
+			if outStr3 := outb3.String(); len(outStr3) > 0 {
+				log.Printf("Deferred stdout: %s.\n", outStr3)
+			}
+			if errStr3 := errb3.String(); len(errStr3) > 0 {
+				log.Printf("Deferred stderr: %s.\n", errStr3)
+			}
 			log.Printf("Deferred execution failed: %s.\n", err.Error())
 		}
 	}
