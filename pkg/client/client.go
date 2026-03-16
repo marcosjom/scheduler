@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/config"
 )
 
 type Client struct {

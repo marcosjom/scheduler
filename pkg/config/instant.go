@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/common"
+	"github.com/marcosjom/scheduler/pkg/common"
 )
 
 // Instant represents a repeatable moment in time.

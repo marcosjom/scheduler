@@ -3,7 +3,7 @@ package task
 import (
 	"time"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/config"
 )
 
 // Determines if a task should be executed.

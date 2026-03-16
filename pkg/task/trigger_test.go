@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/config"
 )
 
 // Testing calculating incremental age, one second increments during one year.

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/task"
+	"github.com/marcosjom/scheduler/pkg/task"
 )
 
 type State struct {

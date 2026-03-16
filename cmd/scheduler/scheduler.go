@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/client"
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/client"
+	"github.com/marcosjom/scheduler/pkg/config"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marcosjom/sys-backups-automation/pkg/common"
-	"github.com/marcosjom/sys-backups-automation/pkg/config"
+	"github.com/marcosjom/scheduler/pkg/common"
+	"github.com/marcosjom/scheduler/pkg/config"
 )
 
 // Testing Instant.String()
